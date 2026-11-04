@@ -16,7 +16,7 @@ st.sidebar.header("Pengaturan Threshold HSV")
 
 # Widget Expander untuk Panduan Warna Hue
 with st.sidebar.expander("Panduan Diagram Hue (0-179)", expanded=False):
-    st.image("Hue OpenCV.png", caption="Grid Nilai Hue OpenCV (0-179)", use_container_width=True)
+    st.image("Hue OpenCV.png", caption="Grid Nilai Hue OpenCV (0-179)", width="stretch")
 
 st.sidebar.subheader("Rentang Nilai HSV")
 
@@ -44,12 +44,12 @@ if uploaded_file is not None:
     col1, col2, col3 = st.columns(3)
     with col1:
         st.subheader("1. Citra Asli (RGB)")
-        st.image(img_rgb, use_container_width=True)
+        st.image(img_rgb, width="stretch")
     with col2:
         st.subheader("2. Binary Mask")
-        st.image(lesion_mask, use_container_width=True, channels="GRAY")
+        st.image(lesion_mask, width="stretch", channels="GRAY")
     with col3:
         st.subheader("3. Hasil Segmentasi")
-        st.image(segmented_result, use_container_width=True)
+        st.image(segmented_result, width="stretch")
 else:
     st.info("Silakan unggah gambar terlebih dahulu untuk menampilkan hasil segmentasi.")
