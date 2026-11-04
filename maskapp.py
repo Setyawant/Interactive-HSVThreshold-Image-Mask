@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import plotly.express as px
 import streamlit as st
 
 # Konfigurasi Halaman Utama
@@ -20,7 +21,7 @@ with st.sidebar.expander("Panduan Diagram Hue (0-179)", expanded=False):
 
 st.sidebar.subheader("Rentang Nilai HSV")
 
-# Menggunakan Range Slider (Tuple nilai awal mengubah widget menjadi 2 titik geser)
+# Menggunakan Range Slider
 h_min, h_max = st.sidebar.slider("Rentang Hue (H)", 0, 179, (111, 124))
 s_min, s_max = st.sidebar.slider("Rentang Saturation (S)", 0, 255, (131, 255))
 v_min, v_max = st.sidebar.slider("Rentang Value (V)", 0, 255, (20, 255))
@@ -28,6 +29,21 @@ v_min, v_max = st.sidebar.slider("Rentang Value (V)", 0, 255, (20, 255))
 # Menyusun array NumPy batas bawah dan atas
 lower_lesion = np.array([h_min, s_min, v_min], dtype=np.uint8)
 upper_lesion = np.array([h_max, s_max, v_max], dtype=np.uint8)
+
+# Fungsi Pembantu untuk Display Interaktif Plotly
+def render_interactive_plot(image_matrix, is_grayscale=False):
+    if is_grayscale:
+        fig = px.imshow(image_matrix, color_continuous_scale="gray")
+    else:
+        fig = px.imshow(image_matrix)
+        
+    fig.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        coloraxis_showscale=False,
+        xaxis=dict(showticklabels=False, showgrid=False, zeroline=False),
+        yaxis=dict(showticklabels=False, showgrid=False, zeroline=False)
+    )
+    st.plotly_chart(fig, width="stretch")
 
 # Pengolahan Citra
 uploaded_file = st.file_uploader("Pilih Berkas Gambar (JPG, JPEG, PNG)", type=["jpg", "jpeg", "png"])
@@ -44,12 +60,12 @@ if uploaded_file is not None:
     col1, col2, col3 = st.columns(3)
     with col1:
         st.subheader("1. Citra Asli (RGB)")
-        st.image(img_rgb, width="stretch")
+        render_interactive_plot(img_rgb)
     with col2:
         st.subheader("2. Binary Mask")
-        st.image(lesion_mask, width="stretch", channels="GRAY")
+        render_interactive_plot(lesion_mask, is_grayscale=True)
     with col3:
         st.subheader("3. Hasil Segmentasi")
-        st.image(segmented_result, width="stretch")
+        render_interactive_plot(segmented_result)
 else:
     st.info("Silakan unggah gambar terlebih dahulu untuk menampilkan hasil segmentasi.")
